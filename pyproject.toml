@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "babichjacob-oneshot-channel"
-version = "0.1.1"
+version = "0.2.0"
 description = "A Python implementation of tokio::sync::oneshot::channel"
 license = "MIT"
 authors = ["J or Jacob Babich <jacobbabichpublic+git@gmail.com>"]
