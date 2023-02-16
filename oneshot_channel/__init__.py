@@ -57,7 +57,7 @@ the sender dropped
 """
 
 
-from asyncio import FIRST_COMPLETED, Event, Future, create_task, wait
+from asyncio import FIRST_COMPLETED, CancelledError, Event, Future, create_task, wait
 from dataclasses import dataclass
 from typing import Generic, TypeVar
 
@@ -261,9 +261,14 @@ class Receiver(Generic[T]):
 
         closed_event = create_task(self._closed.wait())
         get_task = create_task(_await_future(self._future))
-        done, _pending = await wait(
-            [get_task, closed_event], return_when=FIRST_COMPLETED
-        )
+        try:
+            done, _pending = await wait(
+                [get_task, closed_event], return_when=FIRST_COMPLETED
+            )
+        except CancelledError:
+            closed_event.cancel()
+            get_task.cancel()
+            raise
 
         if closed_event in done:
             get_task.cancel()
