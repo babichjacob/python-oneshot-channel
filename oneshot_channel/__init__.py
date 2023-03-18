@@ -19,7 +19,7 @@ This includes sending between two runtimes, and using it from non-async code.
 ...         print("the receiver dropped")
 
 >>> async def main():
-...     tx, rx = oneshot_channel()
+...     tx, rx = channel()
 ...
 ...     create_task(producer(tx))
 ...
@@ -40,7 +40,7 @@ If the sender is dropped without sending, the receiver will fail with `RecvError
 ...     del tx
 
 >>> async def main():
-...     tx, rx = oneshot_channel()
+...     tx, rx = channel()
 ...
 ...     create_task(drop_tx(tx))
 ...     del tx # Remove this extra reference to the Sender to ensure proper RAII behavior
@@ -110,7 +110,7 @@ class Sender(Generic[T]):
         ...         print("the receiver dropped")
 
         >>> async def main():
-        ...     tx, rx = oneshot_channel()
+        ...     tx, rx = channel()
         ...
         ...     create_task(producer(tx))
         ...
@@ -153,7 +153,7 @@ class Sender(Generic[T]):
         ...     del rx
 
         >>> async def main():
-        ...     tx, rx = oneshot_channel()
+        ...     tx, rx = channel()
         ...
         ...     create_task(drop_rx(rx))
         ...     del rx # Remove this extra reference to the Receiver to ensure proper RAII behavior
@@ -180,7 +180,7 @@ class Sender(Generic[T]):
         # Examples
 
         >>> async def main():
-        ...     (tx, rx) = oneshot_channel();
+        ...     (tx, rx) = channel();
         ...
         ...     assert not tx.is_closed()
         ...
@@ -307,7 +307,7 @@ class Receiver(Generic[T]):
         >>> from option_and_result import MatchesErr, MatchesOk
 
         >>> async def main():
-        ...     (tx, rx) = oneshot_channel();
+        ...     (tx, rx) = channel();
         ...
         ...     match rx.try_recv().to_matchable():
         ...         case MatchesErr(TryRecvErrorEmpty()):
@@ -332,7 +332,7 @@ class Receiver(Generic[T]):
         >>> from option_and_result import MatchesErr
 
         >>> async def main():
-        ...     (tx, rx) = oneshot_channel();
+        ...     (tx, rx) = channel();
         ...
         ...     del tx
         ...
@@ -381,7 +381,7 @@ class Receiver(Generic[T]):
         >>> from option_and_result import MatchesErr
 
         >>> async def main():
-        ...     (tx, rx) = oneshot_channel();
+        ...     (tx, rx) = channel();
         ...
         ...     assert not tx.is_closed()
         ...
@@ -403,7 +403,7 @@ class Receiver(Generic[T]):
         Receive a value sent **before** calling `close`
 
         >>> async def main():
-        ...     (tx, rx) = oneshot_channel();
+        ...     (tx, rx) = channel();
         ...
         ...     assert tx.send("will receive").is_ok()
         ...
@@ -422,7 +422,7 @@ class Receiver(Generic[T]):
         self.close()
 
 
-def oneshot_channel() -> tuple[Sender[T], Receiver[T]]:
+def channel() -> tuple[Sender[T], Receiver[T]]:
     """
     Creates a new one-shot channel for sending single values across asynchronous tasks.
 

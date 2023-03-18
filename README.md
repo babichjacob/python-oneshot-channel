@@ -14,7 +14,7 @@ This package is [published to PyPI as `babichjacob-oneshot-channel`](https://pyp
 from asyncio import create_task, gather, run, sleep
 from itertools import count
 
-from oneshot_channel import oneshot_channel, Receiver, Sender
+from oneshot_channel import channel, Receiver, Sender
 
 # TODO: write usage guidance
 ```

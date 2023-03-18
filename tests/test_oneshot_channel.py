@@ -5,14 +5,14 @@ from asyncio import create_task, wait_for
 import pytest
 from option_and_result import MatchesErr
 
-from oneshot_channel import Receiver, TryRecvErrorClosed, oneshot_channel
+from oneshot_channel import Receiver, TryRecvErrorClosed, channel
 
 
 @pytest.mark.asyncio
 async def test_async_send_recv():
     "Test a basic send and receive"
 
-    sender, receiver = oneshot_channel()
+    sender, receiver = channel()
 
     assert sender.send(1).is_ok()
     assert (await receiver).unwrap() == 1
@@ -31,7 +31,7 @@ async def test_async_rx_closed():
     if the channel is already closed
     """
 
-    (sender, receiver) = oneshot_channel()
+    (sender, receiver) = channel()
 
     create_task(drop_rx(receiver))
     # Remove this extra reference so RAII can work correctly
@@ -44,7 +44,7 @@ async def test_async_rx_closed():
 async def test_close_after_receive():
     "Test that the receiver can be closed even after receiving a value"
 
-    sender, receiver = oneshot_channel()
+    sender, receiver = channel()
 
     sender.send(17).unwrap()
 
@@ -56,7 +56,7 @@ async def test_close_after_receive():
 async def test_try_recv_after_completion():
     "Test that attempts to try_recv after getting a value yield closed errors"
 
-    sender, receiver = oneshot_channel()
+    sender, receiver = channel()
 
     sender.send(17).unwrap()
 
